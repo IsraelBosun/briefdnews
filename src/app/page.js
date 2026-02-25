@@ -133,6 +133,17 @@ export default function LandingPage() {
           <span className="font-semibold text-gray-700">Lumi</span> — News that actually makes
           sense to you.
         </p>
+        <p className="mt-2 text-xs">
+          Built by{" "}
+          <a
+            href="https://bluehydradev.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-amber-500 hover:text-amber-600 font-medium transition-colors"
+          >
+            BlueHydra Labs
+          </a>
+        </p>
       </footer>
     </div>
   );

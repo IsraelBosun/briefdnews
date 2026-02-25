@@ -112,6 +112,18 @@ export default function MainLayout({ children }) {
       </nav>
 
       <main>{children}</main>
+
+      <footer className="border-t border-gray-100 py-6 text-center text-xs text-gray-400">
+        Built by{" "}
+        <a
+          href="https://bluehydradev.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-amber-500 hover:text-amber-600 font-medium transition-colors"
+        >
+          BlueHydra Labs
+        </a>
+      </footer>
     </div>
   );
 }
