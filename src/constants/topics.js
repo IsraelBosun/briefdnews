@@ -1,0 +1,18 @@
+export const TOPICS = [
+  { slug: "nigeria",       label: "Nigeria",               emoji: "🇳🇬" },
+  { slug: "africa",        label: "Africa",                emoji: "🌍" },
+  { slug: "world",         label: "World News",            emoji: "🌐" },
+  { slug: "politics",      label: "Politics",              emoji: "🏛️" },
+  { slug: "business",      label: "Business & Economy",    emoji: "💼" },
+  { slug: "technology",    label: "Tech & AI",             emoji: "🤖" },
+  { slug: "startups",      label: "Startups",              emoji: "🚀" },
+  { slug: "finance",       label: "Personal Finance",      emoji: "💰" },
+  { slug: "sports",        label: "Sports",                emoji: "⚽" },
+  { slug: "entertainment", label: "Entertainment",         emoji: "🎬" },
+  { slug: "culture",       label: "Culture & Lifestyle",   emoji: "🎭" },
+  { slug: "health",        label: "Health",                emoji: "🏥" },
+  { slug: "science",       label: "Science",               emoji: "🔬" },
+  { slug: "environment",   label: "Environment & Climate", emoji: "🌿" },
+  { slug: "education",     label: "Education",             emoji: "📚" },
+  { slug: "crime",         label: "Crime & Security",      emoji: "🔒" },
+];

@@ -1,65 +1,139 @@
-import Image from "next/image";
+import Link from "next/link";
+import { TOPICS } from "@/constants/topics";
 
-export default function Home() {
+const FEATURES = [
+  {
+    icon: "⚡",
+    title: "60-Second Reads",
+    description:
+      "Every article distilled into a clear, jargon-free summary you can actually finish. No walls of text.",
+  },
+  {
+    icon: "🎯",
+    title: "Personalised For You",
+    description:
+      "The more you read, the smarter your feed gets. Lumi learns what topics matter to you.",
+  },
+  {
+    icon: "🧠",
+    title: "Go Deeper, On Demand",
+    description:
+      "Switch between Summary, Full Story, and Deep Dive. Plus a Rabbit Hole section to satisfy your curiosity.",
+  },
+];
+
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+          <span className="text-xl font-bold text-gray-900">
+            Lumi <span className="text-amber-500">✦</span>
+          </span>
+          <Link
+            href="/login"
+            className="bg-amber-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-amber-600 transition-colors"
+          >
+            Browse Feed
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </nav>
+
+      {/* Hero */}
+      <section className="max-w-4xl mx-auto px-4 pt-20 pb-16 text-center">
+        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium px-4 py-1.5 rounded-full mb-8">
+          <span>✦</span> AI-powered news for real people
+        </div>
+
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+          News that actually{" "}
+          <span className="text-amber-500">makes sense</span>{" "}
+          to you.
+        </h1>
+
+        <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+          Lumi takes the headlines, strips the noise, and gives you the story in plain
+          language — with as much depth as you want.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/login"
+            className="w-full sm:w-auto bg-amber-500 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:bg-amber-600 transition-colors shadow-md"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
+            Get Started Free →
+          </Link>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#how-it-works"
+            className="w-full sm:w-auto bg-white text-gray-700 px-8 py-3.5 rounded-full font-semibold text-base border border-gray-200 hover:bg-gray-50 transition-colors"
           >
-            Documentation
+            How it works
           </a>
         </div>
-      </main>
+      </section>
+
+      {/* Features */}
+      <section id="how-it-works" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-12">
+          Built for people who hate reading the news
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {FEATURES.map((feature) => (
+            <div
+              key={feature.title}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+            >
+              <div className="text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Topics preview */}
+      <section className="max-w-4xl mx-auto px-4 py-12">
+        <h2 className="text-xl font-semibold text-gray-900 text-center mb-6">
+          Choose what you care about
+        </h2>
+        <div className="flex flex-wrap justify-center gap-3">
+          {TOPICS.map((topic) => (
+            <Link
+              key={topic.slug}
+              href={`/feed?topic=${topic.slug}`}
+              className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-700 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 transition-colors shadow-sm"
+            >
+              <span>{topic.emoji}</span>
+              <span>{topic.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="max-w-2xl mx-auto px-4 py-20 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          Stay informed. Stay sane.
+        </h2>
+        <p className="text-gray-500 mb-8">
+          Sign in with Google — it{"'"}s free. Your personalised feed is ready in seconds.
+        </p>
+        <Link
+          href="/login"
+          className="bg-amber-500 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-colors shadow-lg inline-block"
+        >
+          Get Started Free →
+        </Link>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-100 py-8 text-center text-sm text-gray-400">
+        <p>
+          <span className="font-semibold text-gray-700">Lumi</span> — News that actually makes
+          sense to you.
+        </p>
+      </footer>
     </div>
   );
 }
