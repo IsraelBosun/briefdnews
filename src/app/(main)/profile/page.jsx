@@ -11,9 +11,20 @@ import { useNotifications } from "@/hooks/useNotifications";
 import TopicDeck from "@/components/onboarding/TopicDeck";
 
 const TONE_OPTIONS = [
-  { value: "FORMAL",         label: "Formal",         description: "Professional, journalistic tone" },
-  { value: "CONVERSATIONAL", label: "Conversational",  description: "Clear and easy to read" },
-  { value: "LIKE_A_FRIEND",  label: "Like a friend",   description: "Casual, warm — like a text from someone who knows things" },
+  { value: "FORMAL",         label: "Journalist",        description: "Professional, journalistic tone" },
+  { value: "CONVERSATIONAL", label: "Casual",            description: "Clear and easy to read" },
+  { value: "LIKE_A_FRIEND",  label: "Friend texting you", description: "Casual, warm — like a text from someone who knows things" },
+];
+
+const NOTIF_TYPES = [
+  { value: "breaking",   label: "Breaking news only",   description: "Only major stories (weight ≥ 0.8)" },
+  { value: "all",        label: "All updates",          description: "Everything in your personalised feed" },
+];
+
+const NOTIF_TIMES = [
+  { value: "morning",   label: "Morning brief",   description: "8 AM daily" },
+  { value: "evening",   label: "Evening summary", description: "7 PM daily" },
+  { value: "both",      label: "Both",            description: "Morning and evening" },
 ];
 
 export default function ProfilePage() {
@@ -22,6 +33,8 @@ export default function ProfilePage() {
 
   const { requestPermission, disableNotifications } = useNotifications(user);
   const [notificationsOn, setNotificationsOn] = useState(false);
+  const [notifType, setNotifType] = useState("all");
+  const [notifTime, setNotifTime] = useState("morning");
   const [notifLoading, setNotifLoading] = useState(false);
 
   const [selectedTopics, setSelectedTopics] = useState([]);
@@ -69,6 +82,8 @@ export default function ProfilePage() {
       setStreak(data.readingStreak || 0);
       setTone(data.tonePreference || "CONVERSATIONAL");
       setNotificationsOn(data.notificationsOn || false);
+      setNotifType(data.notifType || "all");
+      setNotifTime(data.notifTime || "morning");
     }
   }, [user]);
 
@@ -101,7 +116,11 @@ export default function ProfilePage() {
       });
       if (!res.ok) throw new Error("Failed to save topics");
 
-      await updateDoc(doc(db, "users", user.uid), { tonePreference: tone });
+      await updateDoc(doc(db, "users", user.uid), {
+        tonePreference: tone,
+        notifType,
+        notifTime,
+      });
 
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -220,13 +239,15 @@ export default function ProfilePage() {
       <section className="mb-10">
         <h2 className="text-lg font-bold text-gray-900 mb-1">Notifications</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Get a morning briefing with your top story of the day.
+          Control what you hear about and when.
         </p>
-        <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl">
+
+        {/* Master toggle */}
+        <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl mb-3">
           <div>
-            <p className="text-sm font-medium text-gray-800">Morning briefing</p>
+            <p className="text-sm font-medium text-gray-800">Push notifications</p>
             <p className="text-xs text-gray-400">
-              {notificationsOn ? "Enabled — you'll receive daily updates" : "Disabled"}
+              {notificationsOn ? "Enabled" : "Disabled"}
             </p>
           </div>
           <button
@@ -257,6 +278,61 @@ export default function ProfilePage() {
             />
           </button>
         </div>
+
+        {/* Granular options — only show when enabled */}
+        {notificationsOn && (
+          <div className="space-y-3 pl-1">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">What to notify me about</p>
+              <div className="flex flex-col gap-2">
+                {NOTIF_TYPES.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setNotifType(opt.value)}
+                    className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
+                      notifType === opt.value
+                        ? "border-amber-400 bg-amber-50"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                    }`}
+                  >
+                    <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+                      notifType === opt.value ? "border-amber-500 bg-amber-500" : "border-gray-300"
+                    }`} />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{opt.label}</p>
+                      <p className="text-xs text-gray-400">{opt.description}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">When to notify me</p>
+              <div className="flex flex-col gap-2">
+                {NOTIF_TIMES.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setNotifTime(opt.value)}
+                    className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
+                      notifTime === opt.value
+                        ? "border-amber-400 bg-amber-50"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                    }`}
+                  >
+                    <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+                      notifTime === opt.value ? "border-amber-500 bg-amber-500" : "border-gray-300"
+                    }`} />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{opt.label}</p>
+                      <p className="text-xs text-gray-400">{opt.description}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Save */}

@@ -9,6 +9,7 @@ import { useBookmarks } from "@/hooks/useBookmarks";
 import LayerToggle from "./LayerToggle";
 import ToneSelector from "./ToneSelector";
 import RabbitHole from "./RabbitHole";
+import RelatedArticles from "./RelatedArticles";
 import Badge from "@/components/ui/Badge";
 import { getTopicMeta, timeAgo, estimateReadTime } from "@/lib/utils";
 
@@ -51,11 +52,20 @@ export default function ArticleReader({ article }) {
     deep: article.deepDive,
   };
 
-  // Apply cached tone rewrite if available, otherwise show base
+  // Pre-generated "friend" version for the full story (avoids API call)
+  const friendContent = {
+    summary: article.summary,         // not pre-generated, fall back to base
+    full: article.friendBody || null, // pre-generated at ingestion time
+    deep: article.deepDive,           // not pre-generated, fall back to base
+  };
+
+  // Apply cached tone rewrite if available; use pre-generated friend content when possible
   const cacheKey = `${activeLayer}_${selectedTone}`;
   const displayContent =
     selectedTone === "CONVERSATIONAL"
       ? baseContent[activeLayer]
+      : selectedTone === "LIKE_A_FRIEND" && friendContent[activeLayer]
+      ? friendContent[activeLayer]
       : toneCache[cacheKey] ?? baseContent[activeLayer];
 
   // Log initial view on mount
@@ -98,10 +108,13 @@ export default function ArticleReader({ article }) {
     return () => observer.disconnect();
   }, [handleCompletion]);
 
-  // Tone change — fetch rewrite if not cached
+  // Tone change — fetch rewrite if not cached and not pre-generated
   async function handleToneChange(newTone) {
     setSelectedTone(newTone);
     if (newTone === "CONVERSATIONAL") return;
+
+    // Use pre-generated friend content if available
+    if (newTone === "LIKE_A_FRIEND" && friendContent[activeLayer]) return;
 
     const key = `${activeLayer}_${newTone}`;
     if (toneCache[key]) return;
@@ -133,6 +146,9 @@ export default function ArticleReader({ article }) {
   async function handleLayerChange(newLayer) {
     setActiveLayer(newLayer);
     if (selectedTone === "CONVERSATIONAL") return;
+
+    // Use pre-generated friend content if available
+    if (selectedTone === "LIKE_A_FRIEND" && friendContent[newLayer]) return;
 
     const key = `${newLayer}_${selectedTone}`;
     if (toneCache[key]) return;
@@ -283,6 +299,9 @@ export default function ArticleReader({ article }) {
           <RabbitHole content={article.rabbitHole} />
         </div>
       )}
+
+      {/* Related articles */}
+      <RelatedArticles articleId={article.id} />
 
       {/* Source link */}
       {article.sourceUrl && (

@@ -11,6 +11,7 @@ Given the article below, return a JSON object with these exact fields:
 {
   "summary": "2 sentences max. Plain language. What happened and why it matters.",
   "simplifiedBody": "A 60-second read version. 150-200 words. Conversational tone. No jargon. Use short paragraphs.",
+  "friendBody": "The same story rewritten as if you're a knowledgeable friend texting another friend. Casual, warm, no jargon. Use contractions. 150-200 words.",
   "deepDive": "100-150 words of background context. Why does this situation exist? What history led to this?",
   "whyItMatters": "One sentence. Complete this: 'This matters because...'",
   "rabbitHole": "Ask one thought-provoking follow-up question, then answer it in 80 words.",

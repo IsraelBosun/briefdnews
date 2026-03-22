@@ -61,6 +61,7 @@ export function serializeArticle(doc) {
     imageUrl: data.imageUrl || null,
     summary: data.summary || null,
     simplifiedBody: data.simplifiedBody || null,
+    friendBody: data.friendBody || null,
     deepDive: data.deepDive || null,
     whyItMatters: data.whyItMatters || null,
     rabbitHole: data.rabbitHole || null,

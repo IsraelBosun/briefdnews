@@ -1,9 +1,9 @@
 "use client";
 
 const TONES = [
-  { value: "CONVERSATIONAL", label: "Default" },
-  { value: "FORMAL",         label: "Formal" },
-  { value: "LIKE_A_FRIEND",  label: "Like a friend" },
+  { value: "CONVERSATIONAL", label: "Casual" },
+  { value: "FORMAL",         label: "Journalist" },
+  { value: "LIKE_A_FRIEND",  label: "Friend texting you" },
 ];
 
 export default function ToneSelector({ selected, onChange, loading }) {

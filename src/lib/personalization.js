@@ -1,6 +1,34 @@
 import { adminDb } from "./firebase-admin";
 import { Timestamp } from "firebase-admin/firestore";
 
+export async function getLatestFeed(userId, limit = 20) {
+  const cutoff = Timestamp.fromDate(new Date(Date.now() - 48 * 60 * 60 * 1000));
+  const articlesSnap = await adminDb
+    .collection("articles")
+    .where("processedAt", ">=", cutoff)
+    .orderBy("processedAt", "desc")
+    .limit(limit)
+    .get();
+
+  // Filter out already-read and unprocessed articles
+  const historySnap = await adminDb
+    .collection("readingHistory")
+    .where("userId", "==", userId)
+    .get();
+  const readArticleIds = new Set();
+  historySnap.forEach((doc) => readArticleIds.add(doc.data().articleId));
+
+  const articles = [];
+  articlesSnap.forEach((doc) => {
+    const article = { id: doc.id, ...doc.data() };
+    if (readArticleIds.has(article.id)) return;
+    if (!article.simplifiedBody) return;
+    articles.push(article);
+  });
+
+  return articles;
+}
+
 export async function getPersonalizedFeed(userId, limit = 20) {
   // Get user topic weights from preferences subcollection
   const prefsSnap = await adminDb
@@ -57,12 +85,24 @@ export async function getPersonalizedFeed(userId, limit = 20) {
   return scored.sort((a, b) => b.score - a.score).slice(0, limit);
 }
 
-export async function updateTopicWeightsFromReading(userId, articleId, completed) {
+export async function updateTopicWeightsFromReading(userId, articleId, completed, reaction = null) {
   const articleSnap = await adminDb.collection("articles").doc(articleId).get();
   if (!articleSnap.exists) return;
 
   const { topicTags = [] } = articleSnap.data();
-  const increment = completed ? 0.1 : 0.02;
+
+  // Reactions override the base increment:
+  // "important" = strong positive signal, "boring" = negative signal
+  let increment;
+  if (reaction === "important") {
+    increment = 0.3;
+  } else if (reaction === "interesting") {
+    increment = 0.15;
+  } else if (reaction === "boring") {
+    increment = -0.15;
+  } else {
+    increment = completed ? 0.1 : 0.02;
+  }
 
   const batch = adminDb.batch();
   const prefsRef = adminDb.collection("users").doc(userId).collection("preferences");
@@ -72,8 +112,9 @@ export async function updateTopicWeightsFromReading(userId, articleId, completed
     const existing = await docRef.get();
 
     if (existing.exists) {
-      batch.update(docRef, { weight: existing.data().weight + increment });
-    } else {
+      const newWeight = Math.max(0.1, existing.data().weight + increment);
+      batch.update(docRef, { weight: newWeight });
+    } else if (increment > 0) {
       batch.set(docRef, { topicSlug, weight: 1.0 + increment });
     }
   }

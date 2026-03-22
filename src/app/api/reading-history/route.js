@@ -24,8 +24,8 @@ export async function POST(req) {
     { merge: true }
   );
 
-  if (completed) {
-    await updateTopicWeightsFromReading(user.uid, articleId, true);
+  if (completed || reaction) {
+    await updateTopicWeightsFromReading(user.uid, articleId, completed || false, reaction || null);
   }
 
   // Update reading streak — once per day
